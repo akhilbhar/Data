@@ -6,7 +6,7 @@ folder="Project"
 dir=paste(dirHome,folder,sep="")
 if(!dir.exists(dir)){dir.create(dir)}
 
-####Downloading Data and unzipping
+#### Step 2 Downloading Data and unzipping
 url="https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 fileName="phone.zip"
 file=paste(dir,"/",fileName,sep="")
@@ -14,7 +14,7 @@ download.file(url,file,mode="wb")
 unzip(file,exdir=dir)
 ##help page https://stat.ethz.ch/R-manual/R-devel/library/utils/html/unzip.html
 
-####Reading Data
+####Step 3 Reading Data
 
 dirData=paste0(dir,"/","UCI HAR Dataset","/")
 features=read.table(paste0(dirData,"features.txt"))
@@ -59,6 +59,8 @@ dataTest[,"subject"]=subTest
 dataTest[,"activity"]=lablesTest
 dataTest[,"activityName"]=factor(dataTest$activity,labels=c("WALKING","WALKING_UPSTAIRS","WALKING_DOWNSTAIRS","SITTING","STANDING","LAYING"))
 
+
+#### Step 4 Tidying and combining data
 ##combine data
 dataAll=rbind(dataTrain,dataTest)
 
@@ -72,9 +74,8 @@ dataAll_M_S=dataAll[,c(A,"subject","activity","activityName")]
 #https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html
 
 ##Summarising data by fun=mean
-summarise(group_by(dataAll_M_S,subject,activity),mean)
 
-summarise_each(group_by(dataAll_M_S,subject,activity),mean)
+#summarise_each(group_by(dataAll_M_S,subject,activity),mean)
 
 Summary=dataAll_M_S%>%group_by(subject,activity,activityName)%>%summarise_each(funs(mean))%>%as.data.frame()
 
@@ -83,6 +84,7 @@ dir="C:/Users/akhil/Desktop/R/coursera/Data_Cleaning/Project/Solution/"
 fileName1="dataTidy_full.csv"
 file1=paste0(dir,fileName1)
 write.csv(dataAll,file1,append=FALSE,row.names=FALSE)
+write.table(dataAll,paste0(dir,"dataTidy_full.txt"),row.names=FALSE)
 
 fileName2="dataTidy_Summ.csv"
 file2=paste0(dir,fileName2)
